@@ -20,7 +20,7 @@ end
 albedo = zeros(h, w, 1);
 normal = zeros(h, w, 3)
 
-for x = 1:w
+for x 1:w
     for y = 1:h
         i = squeeze(image_stack(x, y, :))
         I = diag(i)
@@ -28,8 +28,6 @@ for x = 1:w
         g = mldivide(I*V, I*i)
         albedo(x, y) = norm(g)
         normal(x, y) = g / norm(g)
-    end
-end
 
 % =========================================================================
 % YOUR CODE GOES HERE
