@@ -8,28 +8,36 @@ function [ albedo, normal ] = estimate_alb_nrm( image_stack, scriptV, shadow_tri
 %   albedo : the surface albedo
 %   normal : the surface normal
 
-
 [h, w, ~] = size(image_stack);
 if nargin == 2
-    shadow_trick = true;
+    shadow_trick = false;
 end
 
 % create arrays for 
 %   albedo (1 channel)
 %   normal (3 channels)
 albedo = zeros(h, w, 1);
-normal = zeros(h, w, 3)
+normal = zeros(h, w, 3);
 
 for x = 1:w
     for y = 1:h
-        i = squeeze(image_stack(x, y, :))
-        I = diag(i)
-        V = scriptV
-        g = mldivide(I*V, I*i)
-        albedo(x, y) = norm(g)
-        normal(x, y) = g / norm(g)
+        i = squeeze(image_stack(x, y, :));
+        % Using the shadow trick, scriptI(x,y) i = scriptI(x,y) scriptV g(x,y)
+        if shadow_trick
+            scriptI = diag(i);
+            g = mldivide(scriptI*scriptV, scriptI*i);
+        % Without the shadow trick, I(x,y) = g(x,y) . Vi
+        else
+            g = linsolve(scriptV, i);
+        end
+        % Checking for divide by zero
+        if norm(g) ~= 0
+            albedo(x, y) = norm(g);
+            normal(x, y, :) = g / norm(g);
+        end
     end
 end
+
 
 % =========================================================================
 % YOUR CODE GOES HERE
