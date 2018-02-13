@@ -25,7 +25,8 @@ for x = 1:w
         % Using the shadow trick, scriptI(x,y) i = scriptI(x,y) scriptV g(x,y)
         if shadow_trick
             scriptI = diag(i);
-            g = mldivide(scriptI*scriptV, scriptI*i);
+            %g = mldivide(scriptI*scriptV, scriptI*i);
+            g = linsolve(scriptI*scriptV, scriptI*i);
         % Without the shadow trick, I(x,y) = g(x,y) . Vi
         else
             g = linsolve(scriptV, i);
