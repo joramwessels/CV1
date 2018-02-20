@@ -2,6 +2,10 @@ close all
 clear all
 clc
  
+% Change the current folder to the folder of this m-file.
+tmp = matlab.desktop.editor.getActive;
+cd(fileparts(tmp.Filename));
+
 disp('Part 1: Photometric Stereo')
 
 % obtain many images in a fixed view under different illumination
