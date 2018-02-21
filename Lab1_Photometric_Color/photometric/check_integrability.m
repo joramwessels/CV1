@@ -46,7 +46,7 @@ for x=2:w-1
 end
 
 for y=2:h-1
-    py(y,:) = (q(y+1,:) - q(y-1,:))/2;
+    py(y,:) = (p(y+1,:) - p(y-1,:))/2;
 end 
 
 SE = (py - qx)^2;
