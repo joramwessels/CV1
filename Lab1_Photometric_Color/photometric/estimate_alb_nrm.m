@@ -21,20 +21,22 @@ normal = zeros(h, w, 3);
 
 for x = 1:w
     for y = 1:h
-        i = squeeze(image_stack(x, y, :));
+        i = squeeze(image_stack(y, x, :));
+        
         % Using the shadow trick, scriptI(x,y) i = scriptI(x,y) scriptV g(x,y)
         if shadow_trick
             scriptI = diag(i);
-            %g = mldivide(scriptI*scriptV, scriptI*i);
             g = linsolve(scriptI*scriptV, scriptI*i);
+            
         % Without the shadow trick, I(x,y) = g(x,y) . Vi
         else
             g = linsolve(scriptV, i);
         end
+        
         % Checking for divide by zero
         if norm(g) ~= 0
-            albedo(x, y) = norm(g);
-            normal(x, y, :) = g / norm(g);
+            albedo(y, x) = norm(g);
+            normal(y, x, :) = g / norm(g);
         end
     end
 end
