@@ -39,8 +39,8 @@ switch path_type
                 height_map(y,x) = height_map(y,x-1) + p(y,x);
             end
         end
-        
     case 'row'
+        
         
         for x=2:w
             height_map(1,x) = height_map(1,x-1) + p(1,x);

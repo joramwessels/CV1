@@ -5,9 +5,7 @@ function [output_image] = rgb2opponent(input_image)
 output_image = zeros(size(input_image));
 
 % Extract the individual red, green, and blue color channels.
-R = input_image(:, :, 1);
-G = input_image(:, :, 2);
-B = input_image(:, :, 3);
+[R, G, B] = getColorChannels(input_image);
 
 output_image(:,:,1) = (R-G)/sqrt(2);
 output_image(:,:,2) = (R+G-2*B)/sqrt(6);
