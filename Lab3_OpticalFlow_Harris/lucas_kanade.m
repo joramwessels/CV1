@@ -1,23 +1,4 @@
-r_size = 15;
-
-im  = im2double(imread('synth1.pgm'));
-im1 = im2double(imread('synth1.pgm'));
-im2 = im2double(imread('synth2.pgm'));
-
-% compute optical flow vectors
-[V, C] = lucaskanade(im1, im2, r_size);
-
-% plot vectors on image using quiver
-show_flow(im, V, C, r_size);
-
-% and for the sphere
-im  = im2double(imread('sphere1.ppm'));
-im1 = im2double(rgb2gray(imread('sphere1.ppm')));
-im2 = im2double(rgb2gray(imread('sphere2.ppm')));
-[V, C] = lucaskanade(im1, im2, r_size);
-show_flow(im, V, C, r_size);
-
-function [V, C] = lucaskanade(im1, im2, r_size)
+function [V, C] = lucas_kanade(im1, im2, r_size)
     [x_len, y_len] = size(im1);
     x_regions = floor(x_len/r_size);
     y_regions = floor(y_len/r_size);
@@ -62,17 +43,4 @@ function b = get_b(region1, region2)
     r1  = reshape(region1, [len, 1]);
     r2  = reshape(region2, [len, 1]);
     b   = r1 - r2;
-end
-
-function show_flow(im, vectors, centers, r_size)
-    start = ceil(r_size/2);
-    [xend, yend] = size(im);
-    x = centers(:, 1);
-    y = centers(:, 2);
-    u = vectors(:, 1);
-    v = vectors(:, 2);
-    figure
-    imshow(im);
-    hold on;
-    quiver(x, y, u, v);
 end
