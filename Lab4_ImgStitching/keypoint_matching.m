@@ -37,7 +37,7 @@ if disp_imgs
 
     figure(2) ; clf ;
     imshow(cat(2, I1, I2),'InitialMagnification','fit') ;
-    
+
     x1 = f1(1,matches(1,:)) ;
     x2 = f2(1,matches(2,:)) + size(I1,2) ;
     y1 = f1(2,matches(1,:)) ;
