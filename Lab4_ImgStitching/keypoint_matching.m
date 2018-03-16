@@ -1,4 +1,4 @@
-function [f1, f2, matches,scores] = keypoint_matching(I1, I2, disp_imgs)
+function [xy1, xy2] = keypoint_matching( I1, I2, disp_imgs )
 
 
 % Input argument parsing
@@ -26,25 +26,30 @@ end
 [f2,d2] = vl_sift(im2) ;
 
 % Match keypoints in images
-[matches, scores] = vl_ubcmatch(d1, d2) ;
+[matches, ~] = vl_ubcmatch(d1, d2) ;
+
+x1 = f1(1,matches(1,:)) ;
+x2 = f2(1,matches(2,:)) ; 
+y1 = f1(2,matches(1,:)) ;
+y2 = f2(2,matches(2,:)) ;
+
+xy1 = cat(1, x1, y1) ;
+xy2 = cat(1, x2, y2) ;
 
 % Display results
 if disp_imgs
     perm = randperm(size(matches,2)) ;
     sel = perm(1:50) ;
     matches = matches(:, sel) ;
-    scores  = scores(sel) ;
 
     figure(2) ; clf ;
     imshow(cat(2, I1, I2),'InitialMagnification','fit') ;
 
-    x1 = f1(1,matches(1,:)) ;
-    x2 = f2(1,matches(2,:)) + size(I1,2) ;
-    y1 = f1(2,matches(1,:)) ;
-    y2 = f2(2,matches(2,:)) ;
+%   Shift x-coordinates of right image
+    x2_t = x2 + size(I1,2) ;
 
     hold on ;
-    h = line([x1 ; x2], [y1 ; y2]) ;
+    h = line([x1(:, sel) ; x2_t(:, sel)], [y1(:, sel) ; y2(:, sel)]) ;
     set(h,'linewidth', 1, 'color', 'b') ;
 
     vl_plotframe(f1(:,matches(1,:))) ;
