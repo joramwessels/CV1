@@ -1,33 +1,40 @@
-function best_trans_pars = RANSAC( xy1, xy2, N, P )
+function best_trans_pars = RANSAC( xy2, xy1, N, P )
     % CONVERTS COORDINATES OF IMAGE 1 TO COUNTERPARTS IN IMAGE 2
-
+    
+    % Separate x and y coordinates     
+    x1 = xy1(1, :) ;
+    y1 = xy1(2, :) ;
+    x2 = xy2(1, :) ;
+    y2 = xy2(2, :) ;
+    
+    % Create A and b arrays from all matches     
+    A = create_A(x1, y1) ;
+    b = reshape(cat(1, x2, y2), 2, []) ;    
 
     r = 10; % allowed radius for inliers
     max_num_inliers = 0;
 
     for i=1:N
 
-    %   Randomly select P matches
+    %   Randomly sample P matches
         perm = randperm(size(xy1,2)) ;
         sel = perm(1:P) ;
-        x1 = xy1(1, sel) ;
-        y1 = xy1(2, sel) ;
-        x2 = xy2(1, sel) ;
-        y2 = xy2(2, sel) ;    
-
-    %   Create A and b arrays
-        A = create_A(x1, y1);
-        b = reshape(cat(1, x2, y2), [], 1) ;
-
+        x1_s = x1(:, sel) ;
+        y1_s = y1(:, sel) ;
+        x2_s = x2(:, sel) ;
+        y2_s = y2(:, sel) ;
+        
+    %   Create A and b arrays from sampled matches
+        A_s = create_A(x1_s, y1_s);
+        b_s = reshape(cat(1, x2_s, y2_s), [], 1) ;
+        
     %   Solve for transformation parameters    
-        trans_pars = pinv(A)*b;
+        trans_pars = pinv(A_s)*b_s;
 
     %   Transform coordinates from image 1
         xy1_t = A * trans_pars;
-        disp(size(xy1_t));
 
     %   Calculate euclidean distances
-        b = reshape(b, 2, []) ;
         xy1_t = reshape(xy1_t, 2, []);  
         euc_dists = sum((xy1_t - b).^2);
 
@@ -38,16 +45,13 @@ function best_trans_pars = RANSAC( xy1, xy2, N, P )
     %   Update best transformation parameters   
         if num_inliers > max_num_inliers
             best_trans_pars = trans_pars ;
-            x1_best_inliers = x1(inliers) ;
-            y1_best_inliers = y1(inliers) ;
-            x2_best_inliers = x2(inliers) ;
-            y2_best_inliers = y2(inliers) ;        
+            best_inliers = inliers ;
         end
     end
 
     % Recalculate transformation parameters using only the best inliers
-    A_best = create_A( x1_best_inliers, y1_best_inliers );
-    b_best = reshape(cat(1, x2_best_inliers, y2_best_inliers), [], 1) ;
+    A_best = create_A( x1(:, best_inliers), y1(:, best_inliers) );
+    b_best = reshape(b(:, best_inliers), [], 1) ;
     best_trans_pars = pinv(A_best)*b_best ; 
 end
 

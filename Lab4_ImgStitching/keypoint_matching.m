@@ -14,12 +14,16 @@ function [xy1, xy2] = keypoint_matching( I1, I2, disp_imgs )
     % Convert to grayscale, if needed
     if c1 > 1
         im1 = rgb2gray(I1) ;
+        im1 = single(im1) ;
+    else
+        im1 = single(I1) ; 
     end
     if c2 > 1
         im2 = rgb2gray(I2) ;
+        im2 = single(im2) ;
+    else
+        im2 = single(I2) ; 
     end
-        im1 = single(I1);
-        im2 = single(I2);
 
     % Detect sift keypoints
     [f1,d1] = vl_sift(im1) ;
@@ -28,6 +32,7 @@ function [xy1, xy2] = keypoint_matching( I1, I2, disp_imgs )
     % Match keypoints in images
     [matches, ~] = vl_ubcmatch(d1, d2) ;
 
+    % Find corresponding x, y coordinates     
     x1 = f1(1,matches(1,:)) ;
     x2 = f2(1,matches(2,:)) ; 
     y1 = f1(2,matches(1,:)) ;

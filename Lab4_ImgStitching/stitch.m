@@ -1,78 +1,36 @@
-function stitch = stitch(im1, im2)
-    [xy1, xy2] = keypoint_matching(im1, im2);
-    bt = RANSAC(xy1, xy2, 100, 50);
-    Transform = zeros([3, 3]);
-    M = [bt(1), bt(2); bt(3), bt(4)];
-    T = [bt(5); bt(6); 1];
-    Transform(1:2, 1:2) = M;
-    Transform(3, 1:3) = T;
-    
-    % determining the size of the canvas
-    [start1, start2, max_dims] = get_max_dimensions(Transform, im1, im2);
-    stitch = zeros(max_dims);
-    
-    % printing the transformed image on the canvas
-    im2 = imtransform(im2, maketform('affine', Transform));
-    [h, w] = size(im2);
-    T = round(T);
-    stitch((1:h)+T(1), (1:w)+T(2)) = im2;
-    %sh = start2(1);
-    %sw = start2(2);
-    %stitch(sh:sh+h-1, sw:sw+w-1) = im2;
-    
-    % printing the unchanged image onto the canvas
-    [h, w] = size(im1);
-    stitch(1:h, 1:w) = im1;
-    %sh = start1(1);
-    %sw = start1(2);
-    %stitch(sh:(sh+h-1), sw:(sw+w-1)) = im1;
-    
-    stitch = stitch / max(max(stitch));
-    imshow(stitch);
+function stitched_imgs = stitch( img1, img2 ) 
+
+n_its = 5 ; % number of iterations
+n_points = 50 ; % number of points
+
+[xy1, xy2] = keypoint_matching( img1, img2, false);
+trans_pars_2_1 = RANSAC(xy2, xy1, n_its, n_points);  % transformation from 2 to 1
+im2_t = transform_img(img2, trans_pars_2_1, 'builtin') ;
+
+figure(1);
+subplot(1, 2, 1)
+imshow(img1)
+subplot(1, 2, 2)
+imshow(im2_t)
+
+[h, w, ~] = size(img2) ;
+upleft_corn = [0,0] ;
+lowleft_corn = [h,0] ;
+
+upleft_corn_t = create_A( [0], [0] ) * trans_pars_2_1;
+lowleft_corn_t = create_A( [0], [h] ) * trans_pars_2_1;
+
+disp(upleft_corn_t)
+disp(lowleft_corn_t)
 end
 
-function [start1, start2, max_dims] = get_max_dimensions(T, im1, im2)
-    % calculates the corner coordinates of the transfored image
-    % to determine the height and width of the stiched image
-    %
-    % start1 and -2 say where to start printing the images on the canvas,
-    % max_dims tells the dimensions of the canvas itself.
-    [h, w] = size(im2);
-    corners = zeros([4, 3]);
-    corners(1, :) = [1, 1, 1] * T;
-    corners(2, :) = [1, w, 1] * T;
-    corners(3, :) = [h, 1, 1] * T;
-    corners(4, :) = [h, w, 1] * T;
-    mins = min(corners);
-    maxs = max(corners);
-    max_dims = round(cat(1, mins(1:2), maxs(1:2)));
-    
-    start1 = ones([1, 2]);
-    start2 = ones([1, 2]);
-    
-    if max_dims(1, 1) < 1
-        start1(1) = round(-max_dims(1, 1));
-        start2(1) = 1;
-    else
-        start1(1) = 1;
-        start2(1) = round(max_dims(1, 1));
+function [A_matrix] = create_A( x, y )
+    len = max(size(x));
+    A_matrix = zeros(2*len, 6);
+    for i=1:len
+        i_1 = 2 * i - 1;
+        i_2 = 2 * i  ;
+        A_matrix(i_1, :) = cat(2, x(:, i), y(:, i), 0, 0, 1, 0) ;
+        A_matrix(i_2, :) = cat(2, 0, 0, x(:, i), y(:, i), 0, 1) ;
     end
-    
-    if max_dims(1, 2) < 1
-        start1(2) = round(-max_dims(1, 2));
-        start2(2) = 1;
-    else
-        start1(2) = 1;
-        start2(2) = round(max_dims(1, 2));
-    end
-    
-    [h, w] = size(im1);
-    max_dims(1, 1) = min(max_dims(1, 1), 1);
-    max_dims(1, 2) = min(max_dims(1, 2), 1);
-    max_dims(2, 1) = max(max_dims(2, 1), h);
-    max_dims(2, 2) = max(max_dims(2, 2), w);
-    
-    height = max_dims(2, 1) - max_dims(1, 1);
-    width  = max_dims(2, 2) - max_dims(1, 2);
-    max_dims = [height, width];
 end
