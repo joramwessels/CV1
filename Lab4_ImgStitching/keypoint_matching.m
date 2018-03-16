@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-function matches = keypoint_matching(im1, im2)
-    [F1, D1] = vl_sift(im1);
-    [F2, D2] = vl_sift(im2);
-    matches  = vl_ubcmatch(D1, D2);
-=======
-function [matches,scores] = keypoint_matching(I1, I2, disp_imgs)
+function [f1, f2, matches,scores] = keypoint_matching(I1, I2, disp_imgs)
 
 
 % Input argument parsing
@@ -43,14 +37,14 @@ if disp_imgs
 
     figure(2) ; clf ;
     imshow(cat(2, I1, I2),'InitialMagnification','fit') ;
-    
-    xa = f1(1,matches(1,:)) ;
-    xb = f2(1,matches(2,:)) + size(I1,2) ;
-    ya = f1(2,matches(1,:)) ;
-    yb = f2(2,matches(2,:)) ;
+
+    x1 = f1(1,matches(1,:)) ;
+    x2 = f2(1,matches(2,:)) + size(I1,2) ;
+    y1 = f1(2,matches(1,:)) ;
+    y2 = f2(2,matches(2,:)) ;
 
     hold on ;
-    h = line([xa ; xb], [ya ; yb]) ;
+    h = line([x1 ; x2], [y1 ; y2]) ;
     set(h,'linewidth', 1, 'color', 'b') ;
 
     vl_plotframe(f1(:,matches(1,:))) ;
@@ -59,5 +53,4 @@ if disp_imgs
     axis image off ;
 
 end
->>>>>>> b0e73496a4ac130dde8c385814e61d2f85292786
 end
