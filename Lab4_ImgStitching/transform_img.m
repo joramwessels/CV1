@@ -18,6 +18,7 @@ function xy = transform_img( img1, trans_pars, transf_meth )
             yi = xy(i, 2) ;
             Ai = create_A( xi, yi ) ;
             xy_t(i, :) ;
+        end
     else
         sprintf('Image transformation method "%s" not recognized.', transf_meth)
     end
