@@ -11,8 +11,9 @@ function best_trans_pars = RANSAC( xy2, xy1, N, P )
     A = create_A(x1, y1) ;
     b = reshape(cat(1, x2, y2), 2, []) ;    
 
-    r = 10; % allowed radius for inliers
+    r = 20; % allowed radius for inliers
     max_num_inliers = 0;
+    best_inliers = zeros(2, size(xy2, 2)) ;
 
     for i=1:N
 
@@ -37,18 +38,22 @@ function best_trans_pars = RANSAC( xy2, xy1, N, P )
     %   Calculate euclidean distances
         xy1_t = reshape(xy1_t, 2, []);  
         euc_dists = sum((xy1_t - b).^2);
+       
 
     %   Calculate number of inliers
         inliers = euc_dists < r;
+        
         num_inliers = sum(inliers);
 
     %   Update best transformation parameters   
         if num_inliers > max_num_inliers
+            max_num_inliers = num_inliers ; 
             best_trans_pars = trans_pars ;
             best_inliers = inliers ;
         end
     end
 
+    display(max_num_inliers)
     % Recalculate transformation parameters using only the best inliers
     A_best = create_A( x1(:, best_inliers), y1(:, best_inliers) );
     b_best = reshape(b(:, best_inliers), [], 1) ;

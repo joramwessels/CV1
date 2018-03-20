@@ -1,7 +1,7 @@
 function stitched_imgs = stitch( img1, img2 ) 
 
-n_its = 5 ; % number of iterations
-n_points = 50 ; % number of points
+n_its = 20 ; % number of iterations
+n_points = 30 ; % number of points
 
 [xy1, xy2] = keypoint_matching( img1, img2, false);
 trans_pars_2_1 = RANSAC(xy2, xy1, n_its, n_points);  % transformation from 2 to 1
@@ -19,9 +19,6 @@ lowleft_corn = [h,0] ;
 
 upleft_corn_t = create_A( [0], [0] ) * trans_pars_2_1;
 lowleft_corn_t = create_A( [0], [h] ) * trans_pars_2_1;
-
-disp(upleft_corn_t)
-disp(lowleft_corn_t)
 end
 
 function [A_matrix] = create_A( x, y )

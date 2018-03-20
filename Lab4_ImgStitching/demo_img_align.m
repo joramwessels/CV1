@@ -39,4 +39,6 @@ clc ; close all;
 left = imread('left.jpg');
 right = imread('right.jpg');
 
+% keypoint_matching(left, right, true)
+% keypoint_matching(right, left, true)
 stitch( left, right)

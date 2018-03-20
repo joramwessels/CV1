@@ -46,19 +46,23 @@ function [xy1, xy2] = keypoint_matching( I1, I2, disp_imgs )
         perm = randperm(size(matches,2)) ;
         sel = perm(1:50) ;
         matches = matches(:, sel) ;
-
-        figure(2) ; clf ;
-        imshow(cat(2, I1, I2),'InitialMagnification','fit') ;
-
+        figure
+        imshow(I1)
+%       
+%         figure(2) ; clf ;
+%         imshow(cat(2, I1, I2),'InitialMagnification','fit') ;
+        
     %   Shift x-coordinates of right image
         x2_t = x2 + size(I1,2) ;
 
         hold on ;
-        h = line([x1(:, sel) ; x2_t(:, sel)], [y1(:, sel) ; y2(:, sel)]) ;
-        set(h,'linewidth', 1, 'color', 'b') ;
+%         h = line([x1(:, sel) ; x2_t(:, sel)], [y1(:, sel) ; y2(:, sel)]) ;
+%         set(h,'linewidth', 1, 'color', 'b') ;
 
         vl_plotframe(f1(:,matches(1,:))) ;
-        f2(1,:) = f2(1,:) + size(I1,2) ;
+        f2(1,:) = f2(1,:) %+ size(I1,2) ;
+        figure
+        imshow(I2)
         vl_plotframe(f2(:,matches(2,:))) ;
         axis image off ;
 
