@@ -9,3 +9,10 @@ end
 %SVM_models = train(traini_histos, vocab);
 %test_histos = translate(test_set, vocab); % Gaat niet werken door labels
 %MAP = evaluate(test_histos, SVM_models, vocab);
+
+%%
+
+clc; close all;
+test_img = data{1}{1}{5} ;
+h = get_histogram( test_img, vocab ) ;
+bincounts = h.Values ;
