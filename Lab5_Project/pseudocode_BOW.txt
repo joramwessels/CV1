@@ -1,3 +1,15 @@
+function main()
+    data = read_data();
+    % determine vocab_set
+    vocab = build_vocab(vocab_set);
+    % determine train_set
+    train_histos = translate(train_set);
+    list_of_four_params = train(train_histos, vocab);
+    % determine test_set
+    test_histos = translate(test_set);
+    MAP = evaluate(test_histos, list_of_four_params, vocab);
+end
+
 function vocab = build_vocab(vocab_set)
     % features = []
     % for each im in vocab vocab_set
@@ -25,13 +37,18 @@ function sentences = translate(train_set, vocab)
         % add histogram to sentences
 end
 
+function list_of_four_params = train(train_set, vocab)
+    % fetch 50 positive ad 150 negative examples for each class
+    % train_SVM for each class
+    % add parameters to list_of_four_params
+end
+
 function parameters = train_SVM(train_set, vocab)
     % 50 positive, and 150 negative examples, 50 per class
     % no cross-validation necessary
     % use the LIBLINEAR library
 
-    % for each im in training_set
-        % histogram = get_histogram(im, vocab)
+    % for each histo in training_set
         % do some training or something idk
 end
 
@@ -47,7 +64,7 @@ function score = get_SVM_score(im, SVM_params, vocab)
     % use LIBLINEAR library to get a score
 end
 
-function MAP = classify(test_set, list_of_four_params, vocab)
+function MAP = evaluate(test_set, list_of_four_params, vocab)
     % for each im in test_set
         % scores = classify(im, list_of_four_params, vocab)
     % return mean average precision
