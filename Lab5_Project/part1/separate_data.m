@@ -8,14 +8,12 @@ function [vocab_set, train_sets, test_set] = separate_data(data);
     vocab_set = cat(2, vocab_set, data{1}{3}(1:200));
     vocab_set = cat(2, vocab_set, data{1}{4}(1:250));
     
-    train_sets = {data{1}{1}(250:500), data{1}{2}(232:465)
-                  data{1}{3}(200:400), data{1}{4}(250:500)};
+    train_sets = cell([1, 4]);
+    train_sets{1} = data{1}{1}(250:500);
+    train_sets{2} = data{1}{2}(232:465);
+    train_sets{3} = data{1}{3}(200:400);
+    train_sets{4} = data{1}{4}(250:500);
     
-    test_set = cell([1, 200]);
-    for i = 0:3
-        for j = 1:50
-            test_set{i*50+j} = {data{2}{i+1}{j}, i+1};
-        end
-    end
+    test_set = data{2};
     
 end
