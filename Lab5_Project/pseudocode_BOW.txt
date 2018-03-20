@@ -1,0 +1,54 @@
+function vocab = build_vocab(vocab_set)
+    % features = []
+    % for each im in vocab vocab_set
+        % add vl_sift(im) to list of features
+    % k_means on features in SIFT-space
+    % vocab = the k_means cluster mean
+end
+
+function histogram = get_histogram(im, vocab)
+    % vl_sift(im)
+    % histogram = zeros(size(vocab))
+    % for each feature descriptor
+        % find closest cluster mean
+        % ++ cluster mean in histogram
+end
+
+function show_histogram(histogram)
+    % use matlab's hist function
+end
+
+function sentences = translate(train_set, vocab)
+    % sentences = []
+    % for each im in train_set
+        % histogram = get_histogram(im, vocab)
+        % add histogram to sentences
+end
+
+function parameters = train_SVM(train_set, vocab)
+    % 50 positive, and 150 negative examples, 50 per class
+    % no cross-validation necessary
+    % use the LIBLINEAR library
+
+    % for each im in training_set
+        % histogram = get_histogram(im, vocab)
+        % do some training or something idk
+end
+
+function scores = classify(im, list_of_four_params, vocab)
+    % scores = []
+    % for each SVM
+        % score = get_SVM_score(im, SVM_params, vocab)
+        % add score to scores
+end
+
+function score = get_SVM_score(im, SVM_params, vocab)
+    % histogram = get_histogram(im, vocab)
+    % use LIBLINEAR library to get a score
+end
+
+function MAP = classify(test_set, list_of_four_params, vocab)
+    % for each im in test_set
+        % scores = classify(im, list_of_four_params, vocab)
+    % return mean average precision
+end
