@@ -1,7 +1,7 @@
 function [vocab_set, train_sets, test_set] = separate_data(data);
     % returns a mixed set for the vocab creation, four separate sets
     % for the training procedure, and a labeled test set {histo, class}
-    fprintf('Separating data into sets...')
+    fprintf('Separating data into sets...\n')
     
     vocab_set = data{1}{1}(1:(250));
     vocab_set = cat(2, vocab_set, data{1}{2}(1:232));

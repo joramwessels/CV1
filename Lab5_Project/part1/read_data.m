@@ -4,7 +4,7 @@ function data = read_data(folder)
     % dimension 2 determines airplanes (1), cars (2), faces (3), or
     %      motorbikes (4)
     % dimension 3 determines the image index
-    fprintf('Reading images...');
+    fprintf('Reading images...\n');
     
     if ~exist('folder', 'var')
         folder = '../Caltech4/ImageData/';
