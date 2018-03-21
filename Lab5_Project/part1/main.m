@@ -8,7 +8,7 @@ for i = 1:4
     train_histos{i} = translate(train_sets{i}, vocab);
     test_histos{i}  = translate(test_sets{i}, vocab);
 end
-%SVM_models = train(train_histos, vocab);
+models = train_models(train_histos);
 %MAP = evaluate(test_histos, SVM_models, vocab);
 
 %%

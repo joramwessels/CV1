@@ -1,5 +1,9 @@
 function models = train_models(train_histos)
+    % trains a binary model per class
+    % for every class it creates a list of (matrix, label) tuples
+    % where the label is 1 if it learns that class (i==j) and 0 otherwise
     fprintf('Training models...')
+    
     n_classes = length(train_histos);
     models = cell([1, n_classes]);
     for i = 1:n_classes
