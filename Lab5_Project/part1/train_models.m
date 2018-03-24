@@ -17,6 +17,7 @@ function models = train_models(train_histos)
             end
             sets{j} = {mtr, lbl};
         end
-        models{i} = train_SVM(sets);
+        [labels, matrix] = prepare_liblinear_format(sets);
+        models{i} = train(labels, matrix);
     end
 end
