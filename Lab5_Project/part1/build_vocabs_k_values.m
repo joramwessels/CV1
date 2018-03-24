@@ -1,6 +1,6 @@
 clc; clear; close all;
-k_values = [400, 800, 1600, 2000, 4000] ;
-sift_meths = {'keypoints', 'dense'} ;
+k_values = [800, 1600, 2000, 4000] ;
+sift_meths = {'keypoints'} ;
 data = read_data() ;
 [vocab_set, train_sets, test_sets] = separate_data(data) ;
 
