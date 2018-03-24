@@ -1,6 +1,8 @@
 % run from folder 'part1'
 data = read_data();
 [vocab_set, train_sets, test_sets] = separate_data(data);
+
+%%
 vocab = build_vocab(vocab_set, 50);
 train_histos = cell([1, 4]);
 test_histos  = cell([1, 4]);

@@ -23,9 +23,9 @@ function data = read_data(folder)
         class_train = cell(1, train_imgs(i));
         for j = 1:train_imgs(i)
             image = imread(strcat(path, 'img', sprintf('%03d', j), '.jpg'));
-            if size(image, 3) == 3
-                image = rgb2gray(image);
-            end
+%             if size(image, 3) == 3
+%                 image = rgb2gray(image);
+%             end
             if isa(image, 'integer')
                 image = im2single(image);
             end
@@ -36,9 +36,9 @@ function data = read_data(folder)
         class_test = cell(1, test_imgs(i));
         for j = 1:test_imgs(i)
             image = imread(strcat(path, 'img', sprintf('%03d', j), '.jpg'));
-            if size(image, 3) == 3
-                image = rgb2gray(image);
-            end
+%             if size(image, 3) == 3
+%                 image = rgb2gray(image);
+%             end
             if isa(image, 'integer')
                 image = im2double(image);
             end
