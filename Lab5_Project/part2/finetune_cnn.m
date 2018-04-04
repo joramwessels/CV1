@@ -83,15 +83,64 @@ classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
 %% TODO: Implement your loop here, to create the data structure described in the assignment
+folder = '../Caltech4/ImageData/';
+train_imgs = [500, 465, 400, 500];
+test_imgs  = [50, 50, 50, 50];
+n_classes = length(classes);
+n_images = sum(train_imgs) + sum(test_imgs);
 
+data = zeros([32, 32, 3, n_images]);
+lbls = zeros([1, n_images]);
+sets = zeros([1, n_images]);
 
+img_counter = 1;
+for i = 1:n_classes
+    class = classes{i};
+    
+    path = strcat(folder, class, '_train/');
+    for j = 1:train_imgs(i)
+        image = imread(strcat(path, 'img', sprintf('%03d', j), '.jpg'));
+        
+        image = imresize(image, [32, 32]);
+        if isa(image, 'integer')
+            image = im2single(image);
+        end
+        if size(image, 3) == 1
+            image = cat(3, image, image, image);
+        end
+        
+        data(:, :, :, img_counter) = image;
+        lbls(img_counter) = i;
+        sets(img_counter) = 1;
+        img_counter = img_counter + 1;
+    end
+    
+    path = strcat(folder, class, '_test/');
+    for j = 1:test_imgs(i)
+        image = imread(strcat(path, 'img', sprintf('%03d', j), '.jpg'));
+        
+        image = imresize(image, [32, 32]);
+        if isa(image, 'integer')
+            image = im2double(image);
+        end
+        if size(image, 3) == 1
+            image = cat(3, image, image, image);
+        end
+        
+        data(:, :, :, img_counter) = image;
+        lbls(img_counter) = i;
+        sets(img_counter) = 2;
+        img_counter = img_counter + 1;
+    end
+    
+end
 %%
 % subtract mean
 dataMean = mean(data(:, :, :, sets == 1), 4);
 data = bsxfun(@minus, data, dataMean);
 
 imdb.images.data = data ;
-imdb.images.labels = single(labels) ;
+imdb.images.labels = single(lbls) ;
 imdb.images.set = sets;
 imdb.meta.sets = {'train', 'val'} ;
 imdb.meta.classes = classes;
