@@ -1,26 +1,10 @@
-function net = update_model(varargin)
+function net = cnn_cifar_init(varargin)
 opts.networkType = 'simplenn' ;
 opts = vl_argparse(opts, varargin) ;
 
+lr = [.1 2] ;
 
-%% TODO: PLAY WITH THESE PARAMETERTS TO GET A BETTER ACCURACY
-
-lr_prev_layers = [.2, 2];
-lr_new_layers  = [1, 4]; 
-
-lr = lr_prev_layers ;
-
-% Meta parameters
-net.meta.inputSize = [32 32 3] ;
-net.meta.trainOpts.learningRate = [ 0.05*ones(1,20) ...
-                                    0.005*ones(1,20)...
-                                    0.0005*ones(1,10)...
-                                    ] ;
-net.meta.trainOpts.weightDecay = 0.0001 ;
-net.meta.trainOpts.batchSize = 100 ;
-net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate) ;
-
-%% Define network 
+% Define network CIFAR10-quick
 net.layers = {} ;
 
 % Block 1
@@ -70,42 +54,35 @@ net.layers{end+1} = struct('type', 'conv', ...
                            'pad', 0) ;
 net.layers{end+1} = struct('type', 'relu') ;
 
-%% TODO: Define the structure here, so that the network outputs 4-class rather than 10 (as in the pretrained network)
 % Block 5
-
-NEW_INPUT_SIZE  = 64;
-NEW_OUTPUT_SIZE = 4;
-
 net.layers{end+1} = struct('type', 'conv', ...
-                           'weights', {{0.05*randn(1,1,NEW_INPUT_SIZE,NEW_OUTPUT_SIZE, 'single'), zeros(1,NEW_OUTPUT_SIZE,'single')}}, ...
-                           'learningRate', .1*lr_new_layers, ...
+                           'weights', {{0.05*randn(1,1,64,10, 'single'), zeros(1,10,'single')}}, ...
+                           'learningRate', .1*lr, ...
                            'stride', 1, ...
                            'pad', 0) ;
 
-%%  Define loss                     
 % Loss layer
 net.layers{end+1} = struct('type', 'softmaxloss') ;
+
+% Meta parameters
+net.meta.inputSize = [32 32 3] ;
+net.meta.trainOpts.learningRate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,5)] ;
+net.meta.trainOpts.weightDecay = 0.0001 ;
+net.meta.trainOpts.batchSize = 100 ;
+net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate) ;
 
 % Fill in default values
 net = vl_simplenn_tidy(net) ;
 
-oldnet = load('./data/pre_trained_model.mat'); oldnet = oldnet.net;
-net = update_weights(oldnet, net);
-end
-
-%% Assign previous weights to the network
-function newnet = update_weights(oldnet, newnet)
-
-% loop until loss layer
-for i = 1:numel(oldnet.layers)-2
-    
-    if(isfield(oldnet.layers{i}, 'weights'))
-       
-        newnet.layers{i}.weights = oldnet.layers{i}.weights;
-        
-    end
-    
-end
-
+% Switch to DagNN if requested
+switch lower(opts.networkType)
+  case 'simplenn'
+    % done
+  case 'dagnn'
+    net = dagnn.DagNN.fromSimpleNN(net, 'canonicalNames', true) ;
+    net.addLayer('error', dagnn.Loss('loss', 'classerror'), ...
+             {'prediction','label'}, 'error') ;
+  otherwise
+    assert(false) ;
 end
 
